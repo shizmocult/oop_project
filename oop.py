@@ -13,4 +13,9 @@ class MemoryGame:
         self.build_grid()
         self.create_restart_button()
 
+    def create_heade(self):
+        title = tk.Label(self.root, text = "GAME CHALLENGE",
+                         font=('Comic Sans MS',25, 'bold'),
+                         bg = '#ADD8E6', fg = '#FF00FF')
+        title.grid(row=0, column=0, columnspan=4, pady=(10, 20))
 
