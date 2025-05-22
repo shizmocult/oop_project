@@ -28,4 +28,13 @@ class MemoryGame:
                 btn.grid(row=i + 1, column=j, padx=5, pady=5)
                 self.buttons[i][j] = btn
 
+    def create_restart_button(self):
+        restart = tk.Button(self.root, text="RESTART",
+                            font=('Comic Sans MS',25),
+                            bg="#FF8A65", fg="#fff",
+                            activebackground="#FFAB91",
+                            padx=10, pady=5,
+                            bd=0, relief=tk.FLAT)
+        restart.grid(row=6, column=0, columnspan=4, pady=(15, 10))
+
 
