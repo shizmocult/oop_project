@@ -36,5 +36,10 @@ class MemoryGame:
                             padx=10, pady=5,
                             bd=0, relief=tk.FLAT)
         restart.grid(row=6, column=0, columnspan=4, pady=(15, 10))
-
+        
+    def restart_game(self):
+        self.logic = GameLogic()
+        for i in range(4):
+            for j in range(4):
+                self.style.set_hidden(self.buttons[i][j])
 
