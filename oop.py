@@ -43,3 +43,17 @@ class MemoryGame:
             for j in range(4):
                 self.style.set_hidden(self.buttons[i][j])
 
+    def show_popup(self,text):
+        popup = tk.Toplevel(self.root)
+        popup.title("RESULT")
+        popup.geometry("300x120")
+        popup.configure(bg="white")
+        label = tk.Label(popup, text=text,
+                         font=('Comic Sans MS', 14),
+                         bg="white", fg="black")
+        label.pack(pady=15)
+        btn = tk.Button(popup, text="ОК", command=popup.destroy,
+                        font=('Comic Sans MS', 12),
+                        bg="#4CAF50", fg="white")
+        btn.pack()
+
