@@ -56,4 +56,24 @@ class MemoryGame:
                         font=('Comic Sans MS', 12),
                         bg="#4CAF50", fg="white")
         btn.pack()
+        
+    def on_click(self, i, j):
+        if self.logic.locked or self.logic.revealed[i][j]:
+            return
 
+        symbol = self.logic.symbols[i][j]
+        self.style.set_revealed(self.buttons[i][j], symbol)
+
+        if not self.logic.first:
+            self.logic.first = (i, j)
+        else:
+            i1, j1 = self.logic.first
+            if self.logic.check_match(i1, j1, i, j):
+                self.logic.revealed[i][j] = True
+                self.logic.revealed[i1][j1] = True
+                self.logic.first = None
+                if self.logic.check_win():
+                    self.show_popup(" Вітаю! Ви відкрили всі пари!")
+            else:
+                self.logic.locked = True
+                self.root.after(1000, self.hide_cards, i, j, i1, j1)
