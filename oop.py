@@ -1,5 +1,4 @@
 import tkinter as tk
-import random
 
 class MemoryGame:
     def __init__(self, root):
@@ -77,3 +76,9 @@ class MemoryGame:
             else:
                 self.logic.locked = True
                 self.root.after(1000, self.hide_cards, i, j, i1, j1)
+
+    def hide_cards(self, i, j, i1, j1):
+        self.style.set_hidden(self.buttons[i][j])
+        self.style.set_hidden(self.buttons[i1][j1])
+        self.logic.first = None
+        self.logic.locked = False
