@@ -6,46 +6,68 @@ class MemoryGame:
         self.root = root
         self.root.title("MEMORY GAME")
         self.root.configure(bg="White")
-        self.root.geometry("417x650")
-        self.logic = GameLogic()
+        self.root.geometry("417x700")
+        self.difficulty = tk.StringVar(value="4x4")
+        self.logic = None
         self.style = GameStyle()
-        self.buttons = [[None] * 4 for _ in range(4)]
+        self.buttons = []
         self.create_header()
-        self.build_grid()
+        self.create_difficulty_selector()
         self.create_restart_button()
+        self.build_grid()
 
     def create_header(self):
         title = tk.Label(self.root, text="GAME CHALLENGE",
                          font=('Comic Sans MS', 21, 'bold'),
                          bg='white', fg='#FF00FF')
-        title.grid(row=0, column=0, columnspan=4, pady=(10, 20))
+        title.grid(row=0, column=0, columnspan=4, pady=(10, 10))
 
-    def build_grid(self):
-        for i in range(4):
-            for j in range(4):
-                btn = tk.Button(self.root, command=lambda i=i, j=j: self.on_click(i, j))
-                self.style.style_button(btn)
-                self.style.set_hidden(btn)
-                btn.grid(row=i + 1, column=j, padx=5, pady=5)
-                self.buttons[i][j] = btn
+    def create_difficulty_selector(self):
+        label = tk.Label(self.root, text="Choose difficulty:",
+                         font=('Comic Sans MS', 12), bg="white")
+        label.grid(row=1, column=0, columnspan=2, pady=(0, 10))
+
+        options = ["2x2", "3x3", "4x4"]
+        dropdown = tk.OptionMenu(self.root, self.difficulty, *options, command=self.on_difficulty_change)
+        dropdown.config(font=('Comic Sans MS', 12), bg="#D1C4E9", fg="black")
+        dropdown.grid(row=1, column=2, columnspan=2)
 
     def create_restart_button(self):
         self.restart = tk.Button(self.root, text="RESTART",
                             command=self.restart_game,
-                            font=('Comic Sans MS',25),
+                            font=('Comic Sans MS', 20),
                             bg="#FF8A65", fg="#fff",
                             activebackground="#FFAB91",
                             padx=10, pady=5,
                             bd=0, relief=tk.FLAT)
-        self.restart.grid(row=6, column=0, columnspan=4, pady=(15, 10))
+        self.restart.grid(row=100, column=0, columnspan=4, pady=(15, 10))
+
+    def build_grid(self):
+        size = int(self.difficulty.get()[0])
+        self.logic = GameLogic(size)
+        self.clear_grid()
+        self.buttons = [[None] * size for _ in range(size)]
+
+        for i in range(size):
+            for j in range(size):
+                btn = tk.Button(self.root, command=lambda i=i, j=j: self.on_click(i, j))
+                self.style.style_button(btn)
+                self.style.set_hidden(btn)
+                btn.grid(row=i + 2, column=j, padx=5, pady=5)
+                self.buttons[i][j] = btn
+
+    def clear_grid(self):
+        for widget in self.root.grid_slaves():
+            if isinstance(widget, tk.Button) and widget != self.restart:
+                widget.destroy()
 
     def restart_game(self):
-        self.logic = GameLogic()
-        for i in range(4):
-            for j in range(4):
-                self.style.set_hidden(self.buttons[i][j])
+        self.build_grid()
 
-    def show_popup(self,text):
+    def on_difficulty_change(self, _):
+        self.build_grid()
+
+    def show_popup(self, text):
         popup = tk.Toplevel(self.root)
         popup.title("RESULT")
         popup.geometry("300x120")
@@ -75,7 +97,7 @@ class MemoryGame:
                 self.logic.revealed[i1][j1] = True
                 self.logic.first = None
                 if self.logic.check_win():
-                    self.show_popup(" Вітаю! Ви відкрили всі пари!")
+                    self.show_popup("Вітаю! Ви відкрили всі пари!")
             else:
                 self.logic.locked = True
                 self.root.after(1000, self.hide_cards, i, j, i1, j1)
@@ -86,7 +108,6 @@ class MemoryGame:
         self.logic.first = None
         self.logic.locked = False
 
-# Дизайн гри
 class GameStyle:
     def __init__(self):
         self.button_font = ('Segoe UI', 15, 'bold')
@@ -121,14 +142,16 @@ class GameStyle:
         )
 
 class GameLogic:
-    def __init__(self):
-        symbols = list("NRKTXYZF") * 2
+    def __init__(self, size):
+        self.size = size
+        total = size * size
+        pair_count = total // 2
+        symbols = random.sample("NRKTXYZF", pair_count) * 2
         random.shuffle(symbols)
-        self.symbols = [symbols[i:i + 4] for i in range(0, 16, 4)]
-        self.revealed = [[False] * 4 for _ in range(4)]
+        self.symbols = [symbols[i:i + size] for i in range(0, total, size)]
+        self.revealed = [[False] * size for _ in range(size)]
         self.first = None
         self.locked = False
-
 
     def check_match(self, i1, j1, i2, j2):
         return self.symbols[i1][j1] == self.symbols[i2][j2]
