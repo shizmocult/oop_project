@@ -40,7 +40,7 @@ class MemoryGame:
             if isinstance(widget, tk.Button) and widget != self.restart:
                 widget.destroy()
 
-        def build_grid(self):
+    def build_grid(self):
         dims = self.difficulty.get().split("x")
         rows, cols = int(dims[0]), int(dims[1])
         self.logic = GameLogic(rows, cols)
@@ -68,10 +68,10 @@ class MemoryGame:
         restart.grid(row=6, column=0, columnspan=4, pady=(15, 10))
         
     def restart_game(self):
-        self.logic = GameLogic()
-        for i in range(4):
-            for j in range(4):
-                self.style.set_hidden(self.buttons[i][j])
+        self.build_grid()
+
+    def on_difficulty_change(self, _):
+        self.build_grid()
 
     def show_popup(self,text):
         popup = tk.Toplevel(self.root)
