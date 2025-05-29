@@ -1,22 +1,39 @@
 import tkinter as tk
+import random
 
 class MemoryGame:
     def __init__(self, root):
         self.root = root
         self.root.title("MEMORY GAME")
         self.root.configure(bg="White")
-        self.logic = GameLogic()
+        s self.difficulty = tk.StringVar(value="4x4")
+        self.logic = None
         self.style = GameStyle()
-        self.buttons = [[None] * 4 for _ in range(4)]
+        self.buttons = []
+
+        for col in range(4):
+            self.root.columnconfigure(col, weight=1)
+
         self.create_header()
-        self.build_grid()
+        self.create_difficulty_selector()
         self.create_restart_button()
+        self.build_grid()
 
     def create_header(self):
         title = tk.Label(self.root, text="GAME CHALLENGE",
                          font=('Comic Sans MS', 25, 'bold'),
                          bg='white', fg='#FF00FF')
         title.grid(row=0, column=0, columnspan=4, pady=(10, 20))
+
+    def create_difficulty_selector(self):
+        label = tk.Label(self.root, text="Choose difficulty:",
+                         font=('Comic Sans MS', 12), bg="white")
+        label.grid(row=1, column=0, columnspan=2, pady=(0, 10))
+
+        options = ["2x2", "4x4", "4x2"]
+        dropdown = tk.OptionMenu(self.root, self.difficulty, *options, command=self.on_difficulty_change)
+        dropdown.config(font=('Comic Sans MS', 12), bg="#D1C4E9", fg="black")
+        dropdown.grid(row=1, column=2, columnspan=2)
 
     def build_grid(self):
         for i in range(4):
