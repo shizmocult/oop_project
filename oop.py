@@ -35,13 +35,27 @@ class MemoryGame:
         dropdown.config(font=('Comic Sans MS', 12), bg="#D1C4E9", fg="black")
         dropdown.grid(row=1, column=2, columnspan=2)
 
-    def build_grid(self):
-        for i in range(4):
-            for j in range(4):
+    def clear_grid(self):
+        for widget in self.root.grid_slaves():
+            if isinstance(widget, tk.Button) and widget != self.restart:
+                widget.destroy()
+
+        def build_grid(self):
+        dims = self.difficulty.get().split("x")
+        rows, cols = int(dims[0]), int(dims[1])
+        self.logic = GameLogic(rows, cols)
+        self.style.update_for_size(rows, cols)
+        self.clear_grid()
+        self.buttons = [[None] * cols for _ in range(rows)]
+
+        shift = (4 - cols) // 2
+
+        for i in range(rows):
+            for j in range(cols):
                 btn = tk.Button(self.root, command=lambda i=i, j=j: self.on_click(i, j))
                 self.style.style_button(btn)
                 self.style.set_hidden(btn)
-                btn.grid(row=i + 1, column=j, padx=5, pady=5)
+                btn.grid(row=i + 2, column=j + shift, padx=5, pady=5)
                 self.buttons[i][j] = btn
 
     def create_restart_button(self):
